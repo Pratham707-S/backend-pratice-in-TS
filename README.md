@@ -1,61 +1,81 @@
-# 🚀 Backend Engineering in TypeScript
+# backend-practice-in-ts
 
-A personal, hands-on repository dedicated to mastering production-grade backend engineering with **Node.js, TypeScript, PostgreSQL, Docker, Redis, and Distributed Architecture**.
-
----
-
-## 📌 Progress Tracker (Module-by-Module)
-
-### 🟢 Section 1: Node.js Core & Internals
-- [x] **01-setup-and-process**: Node runtime setup, TypeScript configuration (`tsconfig.json`), `process` global object, CLI arguments (`process.argv`), environment variables (`process.env`), exit codes (`process.exit`), lifecycle events (`SIGINT` graceful shutdown), and custom interactive runtime visualizer.
-- [ ] **02-core-modules**: Crypto, OS, Path, Timers, and EventEmitter.
-- [ ] **03-async-programming**: Callbacks, Promises, and async/await error handling.
-- [ ] **04-fs-buffers-streams**: File System APIs, Buffers, and Stream pipelines.
-- [ ] **05-http-server-apis**: Vanilla Node HTTP server, routing, request streams, and response handling.
-- [ ] **06-runtime-internals**: V8 engine, libuv event loop phases, and worker clustering.
+Production-grade backend engineering architecture implementations and runtime experiments in TypeScript. Covers Node.js runtime internals, relational database engineering with PostgreSQL, containerization with Docker, caching and streaming with Redis, distributed job queues with BullMQ, and secure authentication systems.
 
 ---
 
-### ⚪ Section 2: PostgreSQL & Relational Database Mastery
-- [ ] PostgreSQL Setup, Schemas & Table creation
-- [ ] SQL Data Types & Constraints
-- [ ] CRUD Operations, Filtering & Pagination
-- [ ] Foreign Keys, 1-N, N-N Relationships & Joins (INNER / LEFT)
-- [ ] Aggregations, Grouping & Subqueries
-- [ ] Indexes & ACID Transactions
+## Architecture & Systems Overview
+
+### 1. Runtime Architecture & Core Systems
+- **Process Lifecycle & OS Bindings**: Signal traps (`SIGINT`, `SIGTERM`), exit semantics (`0` vs `1`), runtime telemetry (`process.pid`, `process.platform`, `process.memoryUsage`), command-line argument tokenization via `process.argv`, and configuration management with `process.env`.
+- **Core Cryptography**: Hash algorithms (SHA-256), cryptographic random token generation, symmetric encryption (AES-256-GCM), and secure password hashing.
+- **System I/O & Buffers**: Binary buffers, stream pipelines (Readable, Writable, Transform), and asynchronous file operations.
+- **Node.js Internals**: V8 engine interaction, libuv event loop phases (Timers, Pending Callbacks, Poll, Check, Close), and multi-core clustering.
+
+### 2. Data Persistence & Relational Modeling (PostgreSQL)
+- Schema design, constraints (Primary Key, Foreign Key, Unique, Check), and relational integrity.
+- Advanced querying: compound filtering, joins, aggregations, subqueries, and pagination.
+- Query optimization, B-tree indexes, execution plans (`EXPLAIN ANALYZE`), and ACID transactions with rollback mechanics.
+
+### 3. Service Layer & API Architecture (Express & Docker)
+- Modular service-controller architecture with typed request/response contracts.
+- High-performance structured logging using Pino.
+- Containerized infrastructure via Docker and Docker Compose.
+- Automated database migration pipelines.
+- Security: Stateless JWT authentication, password hashing, and role-based access control (RBAC) middleware.
+
+### 4. Distributed Caching & Event Systems (Redis)
+- In-memory key-value data structures: Strings, Hashes, Lists, Sets, and Sorted Sets.
+- Cache-aside implementation, TTL strategies, and cache invalidation mechanics.
+- Distributed rate limiting middleware.
+- Redis Publish/Subscribe messaging pattern.
+
+### 5. Background Processing & External Integrations
+- Multipart file streaming with Multer and Cloudinary asset management.
+- Asynchronous job queues and worker consumers using BullMQ and Redis.
+- OAuth 2.0 authentication workflow.
 
 ---
 
-### ⚪ Section 3: Express.js, Docker & Security
-- [ ] Express Project Architecture & Pino Logger
-- [ ] Docker Compose setup for PostgreSQL
-- [ ] Database Migration Scripts & SQL Schemas
-- [ ] User Authentication: Hashing (Bcrypt) & JWT Tokens
-- [ ] Authorization & Role-Based Access Control (RBAC) Middleware
-- [ ] REST API CRUD Endpoints
+## Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Language & Runtime** | TypeScript, Node.js (v22+) |
+| **Execution Tooling** | `tsx`, `typescript` |
+| **Primary Database** | PostgreSQL |
+| **In-Memory Cache & Broker** | Redis |
+| **Queue / Asynchronous Workers** | BullMQ |
+| **Infrastructure & Containers** | Docker, Docker Compose |
 
 ---
 
-### ⚪ Section 4: Redis Caching, Queues & Scaling
-- [ ] Redis Data Structures & In-Memory Storage
-- [ ] Redis Node.js Client
-- [ ] Cache-Aside Pattern & Stale Cache Invalidation
-- [ ] API Rate Limiting Middleware
-- [ ] Redis Pub/Sub Architecture
+## Repository Layout
+
+```text
+.
+├── Day-01-Nodejs-Core-and-Internals/
+│   └── 01-setup-and-process/
+├── .gitignore
+├── tsconfig.json
+└── README.md
+```
 
 ---
 
-### ⚪ Section 5: Microservices & Advanced Backend
-- [ ] File Uploads with Multer & Cloudinary
-- [ ] Banner Management with Cache Invalidation
-- [ ] BullMQ Background Job Processing & Worker Queues
-- [ ] Google OAuth 2.0 Integration
+## Getting Started
 
----
+### Prerequisites
+- Node.js >= 22.0.0
+- npm >= 10.0.0
 
-## 🛠️ Stack & Tools
-- **Language:** TypeScript
-- **Runtime:** Node.js (v22+)
-- **Execution:** `tsx`
-- **Database:** PostgreSQL, Redis
-- **Infra:** Docker
+### Running Modules
+Modules are structured as isolated TypeScript entry points. Execute scripts directly using `tsx`:
+
+```bash
+# Example: Executing the Process & CLI Telemetry Service
+npx tsx Day-01-Nodejs-Core-and-Internals/01-setup-and-process/src/process_demo.ts info
+
+# Example: Starting server simulation with environment override
+PORT=8080 npx tsx Day-01-Nodejs-Core-and-Internals/01-setup-and-process/src/process_demo.ts start
+```

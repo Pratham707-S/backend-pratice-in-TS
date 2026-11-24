@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Node.js Runtime Visualizer — Minimalist & Step-by-Step</title>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #09090b;
+      --card: #121215;
+      --card-muted: #18181b;
+      --border: #27272a;
+      --border-focus: #3f3f46;
+      --text: #fafafa;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.15);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.15);
+      --amber: #f59e0b;
+      --purple: #8b5cf6;
+      --red: #ef4444;
+      
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      padding: 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Nav */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    /* Control Strip */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 18px;
+    }
+    .scenario-select {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .scenario-select label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    select {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      outline: none;
+      cursor: pointer;
+      transition: border 0.2s;
+    }
+    select:focus { border-color: var(--accent); }
+
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    button {
+      background: var(--card-muted);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    button:hover {
+      background: var(--border);
+      border-color: var(--border-focus);
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button.primary:hover {
+      background: #2563eb;
+    }
+
+    /* Stepper Progress Bar */
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .step-pill {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 6px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    /* Main Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: 340px 1fr 380px;
+      gap: 16px;
+      flex: 1;
+    }
+
+    @media (max-width: 1200px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+    }
+    .panel-header strong { color: var(--text); }
+
+    /* Code View */
+    .code-view {
+      padding: 14px 0;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      overflow-y: auto;
+      flex: 1;
+      background: #000;
+    }
+    .code-row {
+      display: flex;
+      align-items: center;
+      padding: 5px 14px;
+      line-height: 1.6;
+      color: #d4d4d8;
+      transition: background 0.15s, border 0.15s;
+      position: relative;
+    }
+    .code-row .gutter {
+      width: 24px;
+      text-align: right;
+      margin-right: 14px;
+      color: var(--text-dim);
+      font-size: 0.78rem;
+      user-select: none;
+    }
+    .code-row .pointer {
+      width: 14px;
+      margin-right: 6px;
+      color: transparent;
+      user-select: none;
+    }
+    .code-row.active {
+      background: rgba(59, 130, 246, 0.12);
+      border-left: 3px solid var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+    .code-row.active .pointer {
+      color: var(--accent);
+    }
+    .code-row.executed {
+      color: var(--text-dim);
+    }
+
+    /* Central Pipeline View */
+    .pipeline {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    /* Explanation Card */
+    .explain-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .explain-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .explain-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .explain-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Architecture Blocks */
+    .blocks-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 120px;
+    }
+    .block-head {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .block-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chip.stack {
+      border-color: rgba(59, 130, 246, 0.4);
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .chip.listener {
+      border-color: rgba(139, 92, 246, 0.4);
+      color: var(--purple);
+      background: rgba(139, 92, 246, 0.1);
+    }
+    .chip.memory {
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--green);
+      background: var(--green-glow);
+    }
+    .empty-note {
+      color: var(--text-dim);
+      font-size: 0.78rem;
+      font-style: italic;
+      margin: auto 0;
+    }
+
+    /* Terminal Output */
+    .terminal-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      background: #000;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      overflow-y: auto;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .term-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #18181b;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .term-meta {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .term-line-badge {
+      background: #27272a;
+      color: #a1a1aa;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+    .term-code {
+      color: #93c5fd;
+    }
+    .term-output {
+      color: #34d399;
+      padding-left: 8px;
+      border-left: 2px solid #27272a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand">
+      <h1>Node.js Execution Step-by-Step</h1>
+      <span class="badge">Day 1: process & internals</span>
+    </div>
+    <div class="stepper">
+      <span>Progress:</span>
+      <span class="step-pill" id="stepPill">Step 0 / 5</span>
+    </div>
+  </header>
+
+  <!-- Controls Bar -->
+  <div class="controls">
+    <div class="scenario-select">
+      <label for="conceptSelect">Choose Example:</label>
+      <select id="conceptSelect" onchange="loadConcept(this.value)">
+        <option value="process_on_exit">1. process.on('exit') vs Normal Code (Why line 1 runs last?)</option>
+        <option value="process_argv">2. process.argv & .slice(2) (Command Line Inputs)</option>
+        <option value="process_exit">3. process.exit(1) vs process.exit(0) (Emergency Stop)</option>
+        <option value="process_env">4. process.env (Secrets & Environment Config)</option>
+      </select>
+    </div>
+
+    <div class="btn-group">
+      <button class="primary" id="btnNext" onclick="nextStep()">Next Step ➔</button>
+      <button id="btnAuto" onclick="toggleAuto()">Auto Play ▶</button>
+      <button onclick="resetSimulator()">Reset 🔄</button>
+    </div>
+  </div>
+
+  <!-- 3-Column Minimalist Grid -->
+  <div class="grid">
+
+    <!-- Column 1: Source Code -->
+    <div class="panel">
+      <div class="panel-header">
+        <strong>Source Code</strong>
+        <span style="font-size: 0.75rem; font-family: var(--font-mono);">src/process_demo.ts</span>
+      </div>
+      <div class="code-view" id="codeView">
+        <!-- Rendered Code Lines -->
+      </div>
+    </div>
+
+    <!-- Column 2: Engine & Memory -->
+    <div class="panel">
+      <div class="panel-header">
+        <strong>Inside Node.js Engine</strong>
+        <span style="font-size: 0.75rem; color: var(--green);">● Active Process</span>
+      </div>
+      
+      <div class="pipeline">
+        
+        <!-- Explanation Card -->
+        <div class="explain-card">
+          <div class="explain-tag" id="explainTag">Step 0: Ready</div>
+          <div class="explain-title" id="explainTitle">Click 'Next Step ➔' to begin</div>
+          <div class="explain-desc" id="explainDesc">
+            Watch how Node.js reads each line of code, what happens inside memory, and exactly when the output appears on the terminal.
+          </div>
+        </div>
+
+        <!-- 2 Memory Blocks -->
+        <div class="blocks-row">
+          
+          <!-- Call Stack -->
+          <div class="block">
+            <div class="block-head">
+              <span>Call Stack</span>
+              <span style="color: var(--accent);">Synchronous</span>
+            </div>
+            <div class="block-body" id="callStackBody">
+              <span class="empty-note">Stack is empty</span>
+            </div>
+          </div>
+
+          <!-- Internal Listeners -->
+          <div class="block">
+            <div class="block-head">
+              <span>Event Table</span>
+              <span style="color: var(--purple);">Listeners Map</span>
+            </div>
+            <div class="block-body" id="eventTableBody">
+              <span class="empty-note">No listeners</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Variables / Memory Heap -->
+        <div class="block">
+          <div class="block-head">
+            <span>Memory Heap & Globals</span>
+            <span style="color: var(--green);">Variables</span>
+          </div>
+          <div class="block-body" id="heapBody">
+            <div class="chip memory">process (Global Object)</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Column 3: Step-by-Step Terminal Trace -->
+    <div class="panel">
+      <div class="panel-header">
+        <strong>Terminal & Execution Trace</strong>
+        <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-dim);">stdout</span>
+      </div>
+      <div class="terminal-container" id="termContainer">
+        <div style="color: var(--text-dim); font-size: 0.78rem;">$ npx tsx src/process_demo.ts</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const concepts = {
+      process_on_exit: {
+        code: [
+          `process.on("exit", () => {`,
+          `  console.log("👋 Bye bye! Program band ho gaya!");`,
+          `});`,
+          ``,
+          `console.log("1. Program shuru hua...");`,
+          `console.log("2. Kaam chal raha hai...");`
+        ],
+        steps: [
+          {
+            line: 1,
+            tag: "Step 1: Reading Line 1",
+            title: "Line 1: Registering 'exit' Listener",
+            desc: "Node.js ne dekha: <code>process.on('exit')</code>. <br><strong>Notice:</strong> Iska callback abhi nahi chalta! Node.js is function ko <em>Event Table</em> me note kar leta hai aur chupchap next line par aage badh jata hai.",
+            stack: ["process.on('exit', callback)"],
+            events: ["'exit' ➔ [Callback Function]"],
+            heap: ["process (Global Object)"],
+            trace: {
+              line: 1,
+              code: "process.on('exit', callback)",
+              action: "Registered listener in Event Table (no terminal output yet)"
+            }
+          },
+          {
+            line: 5,
+            tag: "Step 2: Reading Line 5",
+            title: "Line 5: Normal Synchronous Execution",
+            desc: "Node.js Line 5 par aaya. <code>console.log('1. Program shuru hua...')</code> Call Stack me aaya aur turant execute hokar terminal par print ho gaya!",
+            stack: ["console.log('1. Program shuru hua...')"],
+            events: ["'exit' ➔ [Callback Function]"],
+            heap: ["process (Global Object)"],
+            trace: {
+              line: 5,
+              code: "console.log('1. Program shuru hua...')",
+              output: "1. Program shuru hua..."
+            }
+          },
+          {
+            line: 6,
+            tag: "Step 3: Reading Line 6",
+            title: "Line 6: Second Normal Execution",
+            desc: "Line 6 bhi Call Stack me aayi aur turant execute hokar terminal par print ho gayi.",
+            stack: ["console.log('2. Kaam chal raha hai...')"],
+            events: ["'exit' ➔ [Callback Function]"],
+            heap: ["process (Global Object)"],
+            trace: {
+              line: 6,
+              code: "console.log('2. Kaam chal raha hai...')",
+              output: "2. Kaam chal raha hai..."
+            }
+          },
+          {
+            line: null,
+            tag: "Step 4: End of File Check",
+            title: "Call Stack is Empty — Node.js Checks Event Loop",
+            desc: "Script ki aakhiri line khatam ho gayi. Node.js ne dekha: <em>'Na koi database query pending hai, na koi timer hai'</em>. Node.js ne tay kiya ki ab process band kiya jaye.",
+            stack: [],
+            events: ["'exit' ➔ [Callback Function]"],
+            heap: ["process (Global Object)"],
+            trace: {
+              line: "--",
+              code: "Event Loop Check",
+              action: "Call stack empty. Node.js prepares to exit."
+            }
+          },
+          {
+            line: 2,
+            tag: "Step 5: Firing 'exit' Event!",
+            title: "Shutter girne se theek pehle (Exit Event Triggered)",
+            desc: "Band hone se just 1 millisecond pehle Node.js <code>'exit'</code> event fire karta hai. Tab Line 1 wala callback function chalta hai aur terminal par print hota hai!",
+            stack: ["exit callback()", "console.log('👋 Bye bye!...')"],
+            events: ["Triggered: 'exit' event!"],
+            heap: ["process (Terminating)"],
+            trace: {
+              line: 2,
+              code: "console.log('👋 Bye bye!...')",
+              output: "👋 Bye bye! Program band ho gaya!"
+            }
+          },
+          {
+            line: null,
+            tag: "Step 6: OS Cleanup",
+            title: "Process Terminated (Exit Code 0)",
+            desc: "Aapke Mac OS ne RAM se is Node.js process ko safely delete kar diya. Program successfully finished!",
+            stack: [],
+            events: [],
+            heap: ["RAM memory reclaimed by OS"],
+            trace: {
+              line: "--",
+              code: "process.exit(0)",
+              action: "Completed with exit code 0."
+            }
+          }
+        ]
+      },
+      process_argv: {
+        code: [
+          `const bag = process.argv;`,
+          `console.log("Full Bag:", bag);`,
+          ``,
+          `const cleanArgs = process.argv.slice(2);`,
+          `console.log("Clean user input:", cleanArgs);`,
+          `const username = cleanArgs[0];`,
+          `console.log("Hello, " + username);`
+        ],
+        steps: [
+          {
+            line: 1,
+            tag: "Step 1: Reading process.argv",
+            title: "Line 1: OS Passes CLI Arguments Array",
+            desc: "Mac OS ne terminal arguments ko tod kar array banaya aur <code>bag</code> variable me save kiya.",
+            stack: ["const bag = process.argv"],
+            events: [],
+            heap: ["bag[0]: '/usr/local/bin/node'", "bag[1]: '.../src/app.ts'", "bag[2]: 'Pratham'"],
+            trace: {
+              line: 1,
+              code: "const bag = process.argv",
+              action: "Loaded 3 arguments into memory"
+            }
+          },
+          {
+            line: 2,
+            tag: "Step 2: Printing Full Array",
+            title: "Line 2: Raw Array Output",
+            desc: "Pehle 2 elements system paths the, jo hume coding me nahi chahiye.",
+            stack: ["console.log('Full Bag:', bag)"],
+            events: [],
+            heap: ["bag: [3 items]"],
+            trace: {
+              line: 2,
+              code: "console.log('Full Bag:', bag)",
+              output: "Full Bag: [ '/usr/local/bin/node', '.../src/app.ts', 'Pratham' ]"
+            }
+          },
+          {
+            line: 4,
+            tag: "Step 3: Slicing the Array",
+            title: "Line 4: .slice(2) Removes System Paths",
+            desc: "JavaScript ka <code>.slice(2)</code> method index 0 aur index 1 ko hata deta hai. Sirf user input bachta hai!",
+            stack: ["process.argv.slice(2)"],
+            events: [],
+            heap: ["cleanArgs: ['Pratham']"],
+            trace: {
+              line: 4,
+              code: "const cleanArgs = process.argv.slice(2)",
+              action: "Cut off first 2 elements. Clean input preserved."
+            }
+          },
+          {
+            line: 5,
+            tag: "Step 4: Printing Clean Input",
+            title: "Line 5: User Input Output",
+            desc: "Terminal par ab clean user input print hua.",
+            stack: ["console.log('Clean user input:', cleanArgs)"],
+            events: [],
+            heap: ["cleanArgs: ['Pratham']"],
+            trace: {
+              line: 5,
+              code: "console.log('Clean user input:', cleanArgs)",
+              output: "Clean user input: [ 'Pratham' ]"
+            }
+          },
+          {
+            line: 6,
+            tag: "Step 5: Assigning Variable",
+            title: "Line 6: Extracting Name",
+            desc: "Index 0 se 'Pratham' nikal kar <code>username</code> variable me save hua.",
+            stack: ["const username = cleanArgs[0]"],
+            events: [],
+            heap: ["username: 'Pratham'"],
+            trace: {
+              line: 6,
+              code: "const username = cleanArgs[0]",
+              action: "username = 'Pratham' stored in memory"
+            }
+          },
+          {
+            line: 7,
+            tag: "Step 6: Final Greeting",
+            title: "Line 7: Final Output Printed",
+            desc: "User ka dynamic greeting message terminal par print ho gaya!",
+            stack: ["console.log('Hello, ' + username)"],
+            events: [],
+            heap: ["username: 'Pratham'"],
+            trace: {
+              line: 7,
+              code: "console.log('Hello, ' + username)",
+              output: "Hello, Pratham"
+            }
+          }
+        ]
+      },
+      process_exit: {
+        code: [
+          `const name = process.argv.slice(2)[0];`,
+          ``,
+          `if (!name) {`,
+          `  console.log("❌ Error: Naam nahi diya!");`,
+          `  process.exit(1); // Immediate Stop!`,
+          `}`,
+          ``,
+          `console.log("✅ Welcome " + name);`,
+          `process.exit(0);`
+        ],
+        steps: [
+          {
+            line: 1,
+            tag: "Step 1: Reading Input",
+            title: "Line 1: No Argument Passed",
+            desc: "Terminal se koi argument nahi aaya tha, isliye <code>name</code> variable <strong>undefined</strong> mila.",
+            stack: ["process.argv.slice(2)[0]"],
+            events: [],
+            heap: ["name: undefined"],
+            trace: {
+              line: 1,
+              code: "const name = process.argv.slice(2)[0]",
+              action: "name is undefined"
+            }
+          },
+          {
+            line: 3,
+            tag: "Step 2: Evaluating IF Condition",
+            title: "Line 3: Condition is TRUE",
+            desc: "Kyunki <code>!name</code> true hai, code IF block ke andar enter karta hai.",
+            stack: ["if (!name) check"],
+            events: [],
+            heap: ["name: undefined"],
+            trace: {
+              line: 3,
+              code: "if (!name)",
+              action: "Condition matched: entered error block"
+            }
+          },
+          {
+            line: 4,
+            tag: "Step 3: Printing Error",
+            title: "Line 4: Error Logged to Terminal",
+            desc: "Terminal par error message print ho gaya.",
+            stack: ["console.log('❌ Error: Naam nahi diya!')"],
+            events: [],
+            heap: [],
+            trace: {
+              line: 4,
+              code: "console.log('❌ Error: Naam nahi diya!')",
+              output: "❌ Error: Naam nahi diya!"
+            }
+          },
+          {
+            line: 5,
+            tag: "Step 4: Immediate Termination",
+            title: "Line 5: process.exit(1) Stops Everything!",
+            desc: "<code>process.exit(1)</code> chalte hi Node.js ne aage ka sara code (Lines 8 & 9) turant cancel kar diya aur OS ko failure code 1 bhej diya!",
+            stack: ["process.exit(1)"],
+            events: [],
+            heap: ["Terminated with Code 1"],
+            trace: {
+              line: 5,
+              code: "process.exit(1)",
+              action: "PROCESS KILLED (Lines 8 & 9 skipped entirely!)"
+            }
+          }
+        ]
+      },
+      process_env: {
+        code: [
+          `const PORT = process.env.PORT || 3000;`,
+          `const ENV = process.env.NODE_ENV || "dev";`,
+          ``,
+          `console.log("Server PORT: " + PORT);`,
+          `console.log("Running in: " + ENV);`
+        ],
+        steps: [
+          {
+            line: 1,
+            tag: "Step 1: Reading PORT",
+            title: "Line 1: Environment Fallback",
+            desc: "Machine ke environment me PORT set nahi tha, isliye <code>|| 3000</code> fallback value lag gayi.",
+            stack: ["process.env.PORT || 3000"],
+            events: [],
+            heap: ["PORT = 3000"],
+            trace: {
+              line: 1,
+              code: "const PORT = process.env.PORT || 3000",
+              action: "PORT assigned 3000"
+            }
+          },
+          {
+            line: 2,
+            tag: "Step 2: Reading Environment",
+            title: "Line 2: Fallback to 'dev'",
+            desc: "<code>NODE_ENV</code> bhi defined nahi tha, isliye 'dev' assign hua.",
+            stack: ["process.env.NODE_ENV || 'dev'"],
+            events: [],
+            heap: ["ENV = 'dev'"],
+            trace: {
+              line: 2,
+              code: "const ENV = process.env.NODE_ENV || 'dev'",
+              action: "ENV assigned 'dev'"
+            }
+          },
+          {
+            line: 4,
+            tag: "Step 3: Output Server Config",
+            title: "Line 4: Printing Server PORT",
+            desc: "Server start message terminal par display hua.",
+            stack: ["console.log('Server PORT: ' + PORT)"],
+            events: [],
+            heap: ["PORT: 3000"],
+            trace: {
+              line: 4,
+              code: "console.log('Server PORT: ' + PORT)",
+              output: "Server PORT: 3000"
+            }
+          },
+          {
+            line: 5,
+            tag: "Step 4: Output Environment",
+            title: "Line 5: Printing Environment",
+            desc: "Execution complete ho gayi.",
+            stack: ["console.log('Running in: ' + ENV)"],
+            events: [],
+            heap: ["ENV: 'dev'"],
+            trace: {
+              line: 5,
+              code: "console.log('Running in: ' + ENV)",
+              output: "Running in: dev"
+            }
+          }
+        ]
+      }
+    };
+
+    let currentConcept = "process_on_exit";
+    let currentStep = 0;
+    let autoTimer = null;
+
+    function renderCodeLines(lines, activeLine) {
+      const el = document.getElementById("codeView");
+      el.innerHTML = "";
+      lines.forEach((lineText, idx) => {
+        const lineNum = idx + 1;
+        const row = document.createElement("div");
+        row.className = "code-row";
+        if (activeLine === lineNum) row.classList.add("active");
+        
+        row.innerHTML = `
+          <span class="pointer">▶</span>
+          <span class="gutter">${lineNum}</span>
+          <span>${lineText || ' '}</span>
+        `;
+        el.appendChild(row);
+      });
+    }
+
+    function renderChips(containerId, items, chipClass, emptyText) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = "";
+      if (!items || items.length === 0) {
+        el.innerHTML = `<span class="empty-note">${emptyText}</span>`;
+        return;
+      }
+      items.forEach(it => {
+        const d = document.createElement("div");
+        d.className = `chip ${chipClass}`;
+        d.textContent = it;
+        el.appendChild(d);
+      });
+    }
+
+    function loadConcept(key) {
+      currentConcept = key;
+      currentStep = 0;
+      clearInterval(autoTimer);
+      autoTimer = null;
+      document.getElementById("btnAuto").textContent = "Auto Play ▶";
+
+      const c = concepts[key];
+      renderCodeLines(c.code, null);
+
+      document.getElementById("stepPill").textContent = `Step 0 / ${c.steps.length}`;
+      document.getElementById("explainTag").textContent = "Ready to start";
+      document.getElementById("explainTitle").textContent = "Click 'Next Step ➔'";
+      document.getElementById("explainDesc").innerHTML = "Each click will execute <strong>exactly one line of code</strong> and show the corresponding trace.";
+
+      renderChips("callStackBody", [], "stack", "Stack is empty");
+      renderChips("eventTableBody", [], "listener", "No listeners");
+      renderChips("heapBody", ["process (Global Object)"], "memory", "Heap empty");
+
+      document.getElementById("termContainer").innerHTML = `<div style="color: var(--text-dim); font-size: 0.78rem;">$ npx tsx src/process_demo.ts</div>`;
+    }
+
+    function nextStep() {
+      const c = concepts[currentConcept];
+      if (currentStep >= c.steps.length) {
+        currentStep = 0; // loop back
+      }
+
+      const st = c.steps[currentStep];
+      renderCodeLines(c.code, st.line);
+
+      document.getElementById("explainTag").textContent = st.tag;
+      document.getElementById("explainTitle").innerHTML = st.title;
+      document.getElementById("explainDesc").innerHTML = st.desc;
+
+      renderChips("callStackBody", st.stack, "stack", "Stack is empty");
+      renderChips("eventTableBody", st.events, "listener", "No listeners");
+      renderChips("heapBody", st.heap, "memory", "Heap empty");
+
+      // Append trace to terminal
+      if (st.trace) {
+        const tc = document.getElementById("termContainer");
+        const entry = document.createElement("div");
+        entry.className = "term-entry";
+        
+        let outHtml = "";
+        if (st.trace.output) {
+          outHtml = `<div class="term-output">↳ ${st.trace.output}</div>`;
+        } else if (st.trace.action) {
+          outHtml = `<div style="color: #60a5fa; font-size: 0.75rem; padding-left: 8px;">ℹ ${st.trace.action}</div>`;
+        }
+
+        entry.innerHTML = `
+          <div class="term-meta">
+            <span class="term-line-badge">Line ${st.trace.line}</span>
+            <span class="term-code">${st.trace.code}</span>
+          </div>
+          ${outHtml}
+        `;
+        tc.appendChild(entry);
+        tc.scrollTop = tc.scrollHeight;
+      }
+
+      currentStep++;
+      document.getElementById("stepPill").textContent = `Step ${currentStep} / ${c.steps.length}`;
+    }
+
+    function toggleAuto() {
+      const btn = document.getElementById("btnAuto");
+      if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+        btn.textContent = "Auto Play ▶";
+      } else {
+        btn.textContent = "Pause ⏸";
+        autoTimer = setInterval(() => {
+          const c = concepts[currentConcept];
+          if (currentStep >= c.steps.length) {
+            clearInterval(autoTimer);
+            autoTimer = null;
+            btn.textContent = "Auto Play ▶";
+            return;
+          }
+          nextStep();
+        }, 2000);
+      }
+    }
+
+    function resetSimulator() {
+      loadConcept(currentConcept);
+    }
+
+    // Init on load
+    loadConcept("process_on_exit");
+  </script>
+</body>
+</html>

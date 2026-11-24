@@ -1,0 +1,1 @@
+-- Practice Constraints (PK, FK, UNIQUE, NOT NULL)

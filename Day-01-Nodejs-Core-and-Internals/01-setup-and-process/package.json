@@ -1,0 +1,19 @@
+{
+  "name": "01-setup-and-process",
+  "version": "1.0.0",
+  "description": "last dance - node setup and process",
+  "main": "src/process_demo.ts",
+  "scripts": {
+    "start": "tsx src/process_demo.ts",
+    "dev": "tsx watch src/process_demo.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,8 +1,8 @@
 # 📓 Cornell Notes: Node.js `process` Object
 
-| **Course:** Node.js Full Course 2026 | **Module:** 01-setup-and-process |
+| **Track:** Backend Engineering in TypeScript | **Module:** 01-setup-and-process |
 | :--- | :--- |
-| **Topic:** Global `process` Architecture & API | **Timestamps:** 40:02 - 55:51 |
+| **Topic:** Global `process` Architecture & API | **Topic:** Node.js Runtime Architecture |
 
 ---
 

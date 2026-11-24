@@ -1,31 +1,26 @@
-# 🚀 5-Day Backend Mastery Roadmap
-> **Course:** Node.ts Full Course 2026 | Complete Backend Development Course (17 Hours)
-> **Instructor:** Sangam Mukherjee ([AceDevHub](https://acedevhub.com))
-> **Video Link:** [Watch on YouTube](https://youtu.be/XdH3gpcwnoA)
+# 🚀 Backend Mastery in TypeScript — Complete Roadmap
+> A production-grade backend engineering curriculum covering Node.js Internals, PostgreSQL, Express, Docker, Redis, BullMQ, and System Architecture.
 
 ---
 
-## 📅 5-Day Execution Strategy
-Total Video Time: **~17 Hours**  
-Realistic Hands-on Practice: **~25 - 30 Hours** (approx **5 - 6 hours/day**)
-
-> 💡 **Tip:** Agar kisi din thoda extra time lag jaye (6-7 din ho jaye), toh tension mat lena! Focus copy-paste pe nahi, concepts samajhne aur haath se code likhne pe rakhna.
+## 📅 Curriculum & Execution Strategy
+Total Content: **~25 - 30 Hours of Intensive Hands-on Engineering**
 
 ---
 
-### 🗺️ Day-by-Day Breakdown & Timestamps
+### 🗺️ Module Breakdown
 
-| Day | Video Timestamps | Main Focus Topics |
+| Module | Focus Areas | Key Topics |
 | :--- | :--- | :--- |
-| **Day 1** | `0:00:00` - `5:07:05` | Node.ts Setup, Core Modules (Crypto, OS, Path, Timers), Async/Await, FS, Streams, Buffers, HTTP Server, V8 & Libuv |
-| **Day 2** | `5:07:05` - `9:14:05` | PostgreSQL Setup, SQL Data Types, CRUD Queries, Filtering, Sorting, Joins, Aggregations, Subqueries, Transactions |
-| **Day 3** | `9:14:05` - `13:02:58` | Express Setup, Pino Logger, Docker Compose, Database Migrations, JWT Auth, Roles Middleware, Tasks CRUD API |
-| **Day 4** | `13:02:58` - `15:21:24` | Redis Architecture, Data Types, Redis Node Client, Caching (Cache-Aside), Rate Limiting, Pub/Sub |
-| **Day 5** | `15:21:24` - `17:00:00` | Cloudinary File Uploads, Multer, Banner Caching, BullMQ Background Jobs, Google OAuth Login, Wrap-up |
+| **Day 1: Node.js Core & Internals** | Runtime Architecture | Node Setup, TypeScript, Process Object, Core Modules (Crypto, OS, Path, Timers, Events), Async/Await, FS, Streams, Buffers, HTTP Server, V8 Engine & Libuv |
+| **Day 2: Relational Databases & SQL** | PostgreSQL Mastery | PostgreSQL Setup, Data Types, Constraints, CRUD Queries, Filtering, Sorting, Joins, Aggregations, Subqueries, Transactions |
+| **Day 3: Express, Docker & Security** | Backend Architecture | Express Setup, Pino Logger, Docker Compose, Database Migrations, JWT Authentication, RBAC Middleware, Tasks CRUD API |
+| **Day 4: Caching, Queues & Scaling** | Redis Architecture | Redis Data Structures, Node Client, Cache-Aside Pattern, Stale Cache Invalidation, Rate Limiting Middleware, Pub/Sub |
+| **Day 5: Advanced Backend Services** | Production Systems | File Uploads (Multer), Cloudinary Integration, Banner Caching, BullMQ Background Job Workers, Google OAuth 2.0 Integration |
 
 ---
 
-## 📂 Folder Structure Overview
+## 📂 Project Structure
 
 ```text
 .
@@ -62,4 +57,12 @@ Realistic Hands-on Practice: **~25 - 30 Hours** (approx **5 - 6 hours/day**)
     └── 05-final-project-backend/
 ```
 
-Har folder ke andar practice files ready hain. Left side video chalao, right side VS Code me folder kholo aur code practice karo! All the best! 🚀
+---
+
+## 🛠️ Tech Stack & Tools
+- **Language:** TypeScript / JavaScript (Node.js v22+)
+- **Runtime & Tools:** `tsx`, `npm`, `tsc`
+- **Database:** PostgreSQL, Redis
+- **Containerization:** Docker & Docker Compose
+- **Security:** JWT, Bcrypt, Google OAuth 2.0
+- **Asynchronous Workers:** BullMQ

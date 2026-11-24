@@ -1,68 +1,61 @@
-# 🚀 Backend Mastery in TypeScript — Complete Roadmap
-> A production-grade backend engineering curriculum covering Node.js Internals, PostgreSQL, Express, Docker, Redis, BullMQ, and System Architecture.
+# 🚀 Backend Engineering in TypeScript
+
+A personal, hands-on repository dedicated to mastering production-grade backend engineering with **Node.js, TypeScript, PostgreSQL, Docker, Redis, and Distributed Architecture**.
 
 ---
 
-## 📅 Curriculum & Execution Strategy
-Total Content: **~25 - 30 Hours of Intensive Hands-on Engineering**
+## 📌 Progress Tracker (Module-by-Module)
+
+### 🟢 Section 1: Node.js Core & Internals
+- [x] **01-setup-and-process**: Node runtime setup, TypeScript configuration (`tsconfig.json`), `process` global object, CLI arguments (`process.argv`), environment variables (`process.env`), exit codes (`process.exit`), lifecycle events (`SIGINT` graceful shutdown), and custom interactive runtime visualizer.
+- [ ] **02-core-modules**: Crypto, OS, Path, Timers, and EventEmitter.
+- [ ] **03-async-programming**: Callbacks, Promises, and async/await error handling.
+- [ ] **04-fs-buffers-streams**: File System APIs, Buffers, and Stream pipelines.
+- [ ] **05-http-server-apis**: Vanilla Node HTTP server, routing, request streams, and response handling.
+- [ ] **06-runtime-internals**: V8 engine, libuv event loop phases, and worker clustering.
 
 ---
 
-### 🗺️ Module Breakdown
-
-| Module | Focus Areas | Key Topics |
-| :--- | :--- | :--- |
-| **Day 1: Node.js Core & Internals** | Runtime Architecture | Node Setup, TypeScript, Process Object, Core Modules (Crypto, OS, Path, Timers, Events), Async/Await, FS, Streams, Buffers, HTTP Server, V8 Engine & Libuv |
-| **Day 2: Relational Databases & SQL** | PostgreSQL Mastery | PostgreSQL Setup, Data Types, Constraints, CRUD Queries, Filtering, Sorting, Joins, Aggregations, Subqueries, Transactions |
-| **Day 3: Express, Docker & Security** | Backend Architecture | Express Setup, Pino Logger, Docker Compose, Database Migrations, JWT Authentication, RBAC Middleware, Tasks CRUD API |
-| **Day 4: Caching, Queues & Scaling** | Redis Architecture | Redis Data Structures, Node Client, Cache-Aside Pattern, Stale Cache Invalidation, Rate Limiting Middleware, Pub/Sub |
-| **Day 5: Advanced Backend Services** | Production Systems | File Uploads (Multer), Cloudinary Integration, Banner Caching, BullMQ Background Job Workers, Google OAuth 2.0 Integration |
+### ⚪ Section 2: PostgreSQL & Relational Database Mastery
+- [ ] PostgreSQL Setup, Schemas & Table creation
+- [ ] SQL Data Types & Constraints
+- [ ] CRUD Operations, Filtering & Pagination
+- [ ] Foreign Keys, 1-N, N-N Relationships & Joins (INNER / LEFT)
+- [ ] Aggregations, Grouping & Subqueries
+- [ ] Indexes & ACID Transactions
 
 ---
 
-## 📂 Project Structure
-
-```text
-.
-├── Day-01-Nodejs-Core-and-Internals/
-│   ├── 01-setup-and-process/
-│   ├── 02-core-modules/
-│   ├── 03-async-programming/
-│   ├── 04-fs-buffers-streams/
-│   ├── 05-http-server-apis/
-│   └── 06-runtime-internals/
-├── Day-02-PostgreSQL-and-SQL-Mastery/
-│   ├── 01-postgres-basics-and-setup/
-│   ├── 02-data-types-and-constraints/
-│   ├── 03-basic-crud-queries/
-│   ├── 04-relationships-and-joins/
-│   ├── 05-aggregations-and-subqueries/
-│   └── 06-indexes-and-transactions/
-├── Day-03-Express-Docker-and-Auth/
-│   ├── 01-express-starter-and-logger/
-│   ├── 02-docker-and-db-migrations/
-│   ├── 03-user-auth-jwt-and-roles/
-│   └── 04-tasks-crud-and-admin-api/
-├── Day-04-Redis-Caching-and-PubSub/
-│   ├── 01-redis-basics-and-cli/
-│   ├── 02-redis-node-client/
-│   ├── 03-caching-and-invalidation/
-│   ├── 04-rate-limiting/
-│   └── 05-pub-sub-system/
-└── Day-05-BullMQ-Cloudinary-and-OAuth/
-    ├── 01-file-upload-cloudinary/
-    ├── 02-banner-crud-with-cache/
-    ├── 03-bullmq-background-jobs/
-    ├── 04-google-oauth-login/
-    └── 05-final-project-backend/
-```
+### ⚪ Section 3: Express.js, Docker & Security
+- [ ] Express Project Architecture & Pino Logger
+- [ ] Docker Compose setup for PostgreSQL
+- [ ] Database Migration Scripts & SQL Schemas
+- [ ] User Authentication: Hashing (Bcrypt) & JWT Tokens
+- [ ] Authorization & Role-Based Access Control (RBAC) Middleware
+- [ ] REST API CRUD Endpoints
 
 ---
 
-## 🛠️ Tech Stack & Tools
-- **Language:** TypeScript / JavaScript (Node.js v22+)
-- **Runtime & Tools:** `tsx`, `npm`, `tsc`
+### ⚪ Section 4: Redis Caching, Queues & Scaling
+- [ ] Redis Data Structures & In-Memory Storage
+- [ ] Redis Node.js Client
+- [ ] Cache-Aside Pattern & Stale Cache Invalidation
+- [ ] API Rate Limiting Middleware
+- [ ] Redis Pub/Sub Architecture
+
+---
+
+### ⚪ Section 5: Microservices & Advanced Backend
+- [ ] File Uploads with Multer & Cloudinary
+- [ ] Banner Management with Cache Invalidation
+- [ ] BullMQ Background Job Processing & Worker Queues
+- [ ] Google OAuth 2.0 Integration
+
+---
+
+## 🛠️ Stack & Tools
+- **Language:** TypeScript
+- **Runtime:** Node.js (v22+)
+- **Execution:** `tsx`
 - **Database:** PostgreSQL, Redis
-- **Containerization:** Docker & Docker Compose
-- **Security:** JWT, Bcrypt, Google OAuth 2.0
-- **Asynchronous Workers:** BullMQ
+- **Infra:** Docker

@@ -8,8 +8,8 @@ A personal repository dedicated to mastering production-grade backend engineerin
 
 ### Section 1: Node.js Core & Internals
 - [x] **01-setup-and-process**: Node runtime setup, TypeScript configuration (`tsconfig.json`), `process` global object, CLI arguments (`process.argv`), environment variables (`process.env`), exit codes (`process.exit`), lifecycle events (`SIGINT` graceful shutdown), and custom interactive runtime visualizer.
-- [ ] **02-core-modules**: Crypto, OS, Path, Timers, and EventEmitter.
-- [ ] **03-async-programming**: Callbacks, Promises, and async/await error handling.
+- [ ✅] **02-core-modules**: Crypto, OS, Path, Timers, and EventEmitter.
+- [ ✅] **03-async-programming**: Callbacks, Promises, and async/await error handling.
 - [ ] **04-fs-buffers-streams**: File System APIs, Buffers, and Stream pipelines.
 - [ ] **05-http-server-apis**: Vanilla Node HTTP server, routing, request streams, and response handling.
 - [ ] **06-runtime-internals**: V8 engine, libuv event loop phases, and worker clustering.

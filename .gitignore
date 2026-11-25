@@ -5,15 +5,4 @@ dist/
 !.env.example
 .DS_Store
 *.log
-
-# Future modules (we will untrack/include these one-by-one as we complete each module!)
-Day-01-Nodejs-Core-and-Internals/02-core-modules/
-Day-01-Nodejs-Core-and-Internals/03-async-programming/
-Day-01-Nodejs-Core-and-Internals/04-fs-buffers-streams/
-Day-01-Nodejs-Core-and-Internals/05-http-server-apis/
-Day-01-Nodejs-Core-and-Internals/06-runtime-internals/
-Day-01-Nodejs-Core-and-Internals/README.md
-Day-02-PostgreSQL-and-SQL-Mastery/
-Day-03-Express-Docker-and-Auth/
-Day-04-Redis-Caching-and-PubSub/
-Day-05-BullMQ-Cloudinary-and-OAuth/
+visualizer.html

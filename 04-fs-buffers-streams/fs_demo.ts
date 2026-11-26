@@ -64,8 +64,8 @@ async function myteam(){
     await fs.appendFile("deepak.txt","\n pratham is  back in pratice")
 
 
-    await fs.unlink("deepak.txt")
-    console.log("File delete hogai beta");
+    // await fs.unlink("deepak.txt")
+    // console.log("File delete hogai beta");
     
 
 
